@@ -1,0 +1,62 @@
+为解决OpenCV版本众多，不同版本间需要重新配置的繁琐问题，特提供mropencv.h实现自动化配置。
+
+使用方法：
+main函数所在文件加入即可
+#include "mropencv.h"
+而其他源文件中使用
+#include "opencv2/opencv.hpp"
+
+以前工程中配置的opencv_core24**.lib等库也不再需要，只要每个人的电脑中都含有mropencv.h就不会影响其在不同oepncv版本间的正确编译和运行。
+
+备注：
+此为动态连接库的配置版本，静态链接库版本需加入
+#pragma comment( lib, "vfw32.lib")
+#pragma comment( lib, "comctl32.lib")
+#pragma comment( lib, "libjasper.lib")
+#pragma comment( lib, "libjpeg.lib")
+#pragma comment( lib, "libpng.lib")
+#pragma comment( lib, "libtiff.lib")
+#pragma comment( lib, "IlmImf.lib")
+#pragma comment( lib, "zlib.lib")
+
+如果在属性里面的Link选项里需要加入，把2411换成你本地的版本，Debug需要在后面加文件名后加d。
+opencv_calib3d2411.lib
+opencv_contrib2411.lib
+opencv_core2411.lib
+opencv_features2d2411.lib
+opencv_flann2411.lib
+opencv_gpu2411.lib
+opencv_highgui2411.lib
+opencv_imgproc2411.lib
+opencv_legacy2411.lib
+opencv_ml2411.lib
+opencv_nonfree2411.lib
+opencv_objdetect2411.lib
+opencv_ocl2411.lib
+opencv_photo2411.lib
+opencv_stitching2411.lib
+opencv_superres2411.lib
+opencv_ts2411.lib
+opencv_video2411.lib
+opencv_videostab2411.lib
+
+如需使用代码在源文件中链接，形式如下：
+#pragma comment(lib,"opencv_calib3d2411.lib")
+#pragma comment(lib,"opencv_contrib2411.lib")
+#pragma comment(lib,"opencv_core2411.lib")
+#pragma comment(lib,"opencv_features2d2411.lib")
+#pragma comment(lib,"opencv_flann2411.lib")
+#pragma comment(lib,"opencv_gpu2411.lib")
+#pragma comment(lib,"opencv_highgui2411.lib")
+#pragma comment(lib,"opencv_imgproc2411.lib")
+#pragma comment(lib,"opencv_legacy2411.lib")
+#pragma comment(lib,"opencv_ml2411.lib")
+#pragma comment(lib,"opencv_nonfree2411.lib")
+#pragma comment(lib,"opencv_objdetect2411.lib")
+#pragma comment(lib,"opencv_ocl2411.lib")
+#pragma comment(lib,"opencv_photo2411.lib")
+#pragma comment(lib,"opencv_stitching2411.lib")
+#pragma comment(lib,"opencv_superres2411.lib")
+#pragma comment(lib,"opencv_ts2411.lib")
+#pragma comment(lib,"opencv_video2411.lib")
+#pragma comment(lib,"opencv_videostab2411.lib")
