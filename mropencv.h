@@ -19,7 +19,7 @@
 	tm.stop();\
 	cout<<#Func<<" cost " << tm.getTimeMilli() << " ms" << endl;\
 
-	#ifdef OPENCV_STATIC
+	#if OPENCV_STATIC
 		#pragma comment( lib,"vfw32.lib")
 		#pragma comment( lib,"comctl32.lib")
 		#pragma comment( lib,"zlib.lib")
@@ -36,22 +36,24 @@
 	#endif
 	#if CV_MAJOR_VERSION == 2
 		#include <opencv2/nonfree/nonfree.hpp>
-		#pragma comment( lib, cvLIB("core") )
-		#pragma comment( lib, cvLIB("imgproc") )
-		#pragma comment( lib, cvLIB("highgui") )
-		#pragma comment( lib, cvLIB("flann") )
-		#pragma comment( lib, cvLIB("features2d") )
-		#pragma comment( lib, cvLIB("calib3d") )
-		#pragma comment( lib, cvLIB("ml") )
-		#pragma comment( lib, cvLIB("contrib") )
-		#pragma comment( lib, cvLIB("legacy") )
-		#pragma comment( lib, cvLIB("objdetect") )
-		#pragma comment( lib, cvLIB("video") )
-		#pragma comment( lib, cvLIB("nonfree") )
+		#pragma comment( lib, cvLIB("core"))
+		#pragma comment( lib, cvLIB("imgproc"))
+		#pragma comment( lib, cvLIB("highgui"))
+		#if CV_USE_ALL_MODULES
+			#pragma comment( lib, cvLIB("flann"))
+			#pragma comment( lib, cvLIB("features2d"))
+			#pragma comment( lib, cvLIB("calib3d"))
+			#pragma comment( lib, cvLIB("ml"))
+			#pragma comment( lib, cvLIB("contrib"))
+			#pragma comment( lib, cvLIB("legacy"))
+			#pragma comment( lib, cvLIB("objdetect"))
+			#pragma comment( lib, cvLIB("video"))
+			#pragma comment( lib, cvLIB("nonfree"))
+		#endif
 	#else
 	#if CV_MAJOR_VERSION == 3&&CV_MINOR_VERSION ==0
-		#pragma comment( lib, cvLIB("world") )
-		#pragma comment( lib, cvLIB("ts") )	
+		#pragma comment( lib, cvLIB("world"))
+		#pragma comment( lib, cvLIB("ts"))	
 	#else
 	#if CV_MAJOR_VERSION == 3&&CV_MINOR_VERSION ==1
 		#pragma comment( lib, cvLIB("core"))
@@ -59,17 +61,18 @@
 		#pragma comment( lib, cvLIB("highgui"))
 		#pragma comment( lib, cvLIB("imgproc"))
 		#pragma comment( lib, cvLIB("imgcodecs"))
+		#if CV_USE_ALL_MODULES		
+			#pragma comment( lib, cvLIB("dnn"))
+			#pragma comment( lib, cvLIB("flann"))
+			#pragma comment( lib, cvLIB("features2d"))
+			#pragma comment( lib, cvLIB("calib3d"))
+			#pragma comment( lib, cvLIB("ml"))
+			#pragma comment( lib, cvLIB("objdetect"))
+			#pragma comment( lib, cvLIB("video"))
 		
-		#pragma comment( lib, cvLIB("dnn"))
-		#pragma comment( lib, cvLIB("flann"))
-		#pragma comment( lib, cvLIB("features2d"))
-		#pragma comment( lib, cvLIB("calib3d"))
-		#pragma comment( lib, cvLIB("ml"))
-		#pragma comment( lib, cvLIB("objdetect"))
-		#pragma comment( lib, cvLIB("video"))
-		
-		#pragma comment( lib, cvLIB("tracking"))
-		#pragma comment( lib, cvLIB("dpm"))
+			#pragma comment( lib, cvLIB("tracking"))
+			#pragma comment( lib, cvLIB("dpm"))
+		#endif
 	#else
 	#if CV_MAJOR_VERSION == 3&&CV_MINOR_VERSION ==2
 	#pragma comment( lib, cvLIB("world") )

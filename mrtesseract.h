@@ -65,6 +65,7 @@ private:
 #else	
 		api.SetVariable("tessedit_char_whitelist", "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ<");
 #endif
+		api.SetVariable("tessedit_char_whitelist", "0123456789");
 		api.SetPageSegMode(tesseract::PSM_SINGLE_CHAR);
 #endif
 	}

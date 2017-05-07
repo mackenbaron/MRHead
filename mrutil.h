@@ -4,17 +4,19 @@
 #include "algorithm"
 using namespace std;
 #ifdef _WIN32
-#include <windows.h>
-void static MRsleep(unsigned milliseconds)
-{
-	Sleep(milliseconds);
-}
+	#if USE_CROSS_PLATFORM_SLEEP
+		#include <windows.h>
+		void static MRsleep(unsigned milliseconds)
+		{
+			Sleep(milliseconds);
+		}
+	#endif
 #else
 #include <unistd.h>
 
 void static MRsleep(unsigned milliseconds)
 {
-	usleep(milliseconds * 1000);
+	usleep(milliseconds * 1000); // takes microseconds
 }
 #endif
 
@@ -48,9 +50,9 @@ static double string2double(std::string s)
 	return d;
 }
 
-
-static void split(const std::string& s, const std::string delim, std::vector< std::string >& ret)
+static std::vector<std::string> split(const std::string& s, const std::string delim)
 {
+	std::vector< std::string > ret;
 	size_t last = 0;
 	size_t index = s.find_first_of(delim, last);
 	while (index != std::string::npos)
@@ -63,6 +65,7 @@ static void split(const std::string& s, const std::string delim, std::vector< st
 	{
 		ret.push_back(s.substr(last, index - last));
 	}
+	return ret;
 }
 
 static size_t levenshtein_distance(const std::string source, const std::string target)

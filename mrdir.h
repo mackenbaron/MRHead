@@ -3,7 +3,6 @@
 #include "string"
 #include "iostream"
 #include "vector"
-using namespace std;
 
 // system
 #ifdef WIN32
@@ -11,7 +10,7 @@ using namespace std;
 #include <io.h>
 #include <direct.h>
 #include <Windows.h>
-#define EXISTS(path) (access(path, 0)!=-1)
+#define EXISTS(path) (_access(path, 0)!=-1)
 #define MKDIR(path) mkdir(path)
 #define SLEEP(ms) Sleep(ms)
 #else
@@ -77,11 +76,11 @@ static char* UTF8ToANSI(const char* str)
 #endif
 
 //获取当前文件夹下所有子文件夹，保存在vector<string>中
-static bool getAllSubdirs(string strDir, std::vector<string> &subdirs)
+static bool getAllSubdirs(std::string strDir, std::vector<std::string> &subdirs)
 {
 	WIN32_FIND_DATA FindData;
 	HANDLE hError;
-	string file2find = strDir + "/*.*";
+	std::string file2find = strDir + "/*.*";
 #if _UNICODE
 	hError = FindFirstFile(ANSIToUnicode(file2find.c_str()), &FindData);
 #else
@@ -118,11 +117,11 @@ static bool getAllSubdirs(string strDir, std::vector<string> &subdirs)
 	return 0;
 }
 
-static bool getAllFilesinDir(string strDir, std::vector<string> &files,string ext="*.*")//获取当前文件夹下所有子文件夹，保存在vector<string>中
+static bool getAllFilesinDir(std::string strDir, std::vector<std::string> &files, std::string ext = "*.*")//获取当前文件夹下所有子文件夹，保存在vector<string>中
 {
 	WIN32_FIND_DATA FindData;
 	HANDLE hError;
-	string file2find = strDir + "/"+ext;
+	std::string file2find = strDir + "/" + ext;
 #if _UNICODE
 	hError = FindFirstFile(ANSIToUnicode(file2find.c_str()), &FindData);
 #else
