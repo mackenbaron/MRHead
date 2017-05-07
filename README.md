@@ -17,7 +17,9 @@
 
 ### Linux
 
-sudo sh setup.sh即可
+```
+sudo sh setup.sh
+```
 
 ## 跨平台编译
 OpenCV示例程序MRCrossPlatform编译方法：
@@ -28,7 +30,7 @@ OpenCV示例程序MRCrossPlatform编译方法：
 * 2.打开CMake，源代码路径选择MRCrossPlatform所在文件件，生成路径在后面加上/build，然后现在下面的Configure按钮，选择是
 ![](http://i.imgur.com/cjIVU7w.png)
 
-* 3.依自己本地安装的VS选择合适的编译器，比如Visual stdio 12 2013 Win64,点击Finish，CMake会进行一系列的检测，如果没有错误，会提示Configuring done，然后再点击COnfigure右侧的Generate按钮，生成对应的VS工程文件
+* 3.依自己本地安装的VS选择合适的编译器，比如Visual stdio 12 2013 Win64,点击Finish，CMake会进行一系列的检测，如果没有错误，会提示Configuring done，然后再点击Configure右侧的Generate按钮，生成对应的VS工程文件
 
 * 4.点击Open Project按钮，打开对应的VS工程，编译即可
 
