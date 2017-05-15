@@ -19,7 +19,7 @@
 	tm.stop();\
 	cout<<#Func<<" cost " << tm.getTimeMilli() << " ms" << endl;\
 
-	#if OPENCV_STATIC
+	#ifdef OPENCV_STATIC
 		#pragma comment( lib,"vfw32.lib")
 		#pragma comment( lib,"comctl32.lib")
 		#pragma comment( lib,"zlib.lib")
@@ -52,8 +52,20 @@
 		#endif
 	#else
 	#if CV_MAJOR_VERSION == 3&&CV_MINOR_VERSION ==0
-		#pragma comment( lib, cvLIB("world"))
-		#pragma comment( lib, cvLIB("ts"))	
+		#ifdef OPENCV_STATIC
+			#pragma comment( lib, cvLIB("core"))
+			#pragma comment( lib, cvLIB("imgproc"))
+			#pragma comment( lib, cvLIB("highgui"))
+			#pragma comment( lib, cvLIB("videoio"))
+			#pragma comment( lib, cvLIB("imgproc"))
+			#pragma comment( lib, cvLIB("imgcodecs"))
+			#pragma comment( lib, cvLIB("hal"))
+			#pragma comment( lib, "ippicvmt.lib")
+			#pragma comment( lib, "libwebp.lib")
+		#else
+			#pragma comment( lib, cvLIB("world"))
+			#pragma comment( lib, cvLIB("ts"))
+		#endif
 	#else
 	#if CV_MAJOR_VERSION == 3&&CV_MINOR_VERSION ==1
 		#pragma comment( lib, cvLIB("core"))

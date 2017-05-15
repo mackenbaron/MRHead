@@ -50,7 +50,6 @@ public:
 			return "";
 		}
 		api.SetImage((uchar*)img.data, img.cols, img.rows, img.channels(), img.step);
-		api.SetVariable("debug_file", "tesseract.log");
 		return api.GetUTF8Text();
 	}
 #endif
@@ -59,13 +58,13 @@ private:
 	{
 #ifdef USE_ENG_DATA
 		api.Init("", "eng");
+		api.SetVariable("tessedit_char_whitelist", "0123456789");
 #else
 #if TESSERACT_PASSPORT
 		api.Init("", langname);
 #else	
 		api.SetVariable("tessedit_char_whitelist", "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ<");
 #endif
-		api.SetVariable("tessedit_char_whitelist", "0123456789");
 		api.SetPageSegMode(tesseract::PSM_SINGLE_CHAR);
 #endif
 	}

@@ -26,6 +26,20 @@ static int Mat2CImage(cv::Mat *mat, CImage &img) {
 
 	return 0;
 }
+
+static void DrawMat2Wnd(const HWND &hWnd, cv::Mat &img, CRect *Roi = NULL)
+{
+	CWnd*pWnd=CWnd::FromHandle(hWnd);
+	CImage imgDst;
+	Mat2CImage(&img, imgDst);
+	CRect drect;
+	if (Roi == NULL)
+		pWnd->GetClientRect(drect);
+	else
+		drect = *Roi;
+	imgDst.Draw(pWnd->GetDC()->GetSafeHdc(), drect);
+}
+
 //功能：把Mat绘制到pWnd所代表的窗体上，使用方法如下所示:
 //DrawMatToWnd(GetDlgItem(IDC_PIC), img);
 static void DrawMat2Wnd(CWnd* pWnd, cv::Mat &img, CRect *Roi = NULL)

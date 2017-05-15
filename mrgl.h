@@ -1,15 +1,17 @@
 #pragma once
 #include "windows.h"
-#ifdef _WIN64
-#include "stdio.h"
-//#include <GL/gl.h>
-//#include <GL/glu.h>
+#include <GL/gl.h>
+#include <GL/glu.h>
 #include "GL/glaux.h"
 #include "GL/glut.h"
-
+#include "stdio.h"
+#if _WIN32
 #pragma comment(lib,"OPENGL32.lib")
 #pragma comment(lib,"glu32.lib")
 #pragma comment(lib,"glut32.lib")
+#pragma comment(lib,"GLAUX.LIB")
+#endif
+#ifdef _WIN64
 AUX_RGBImageRec * auxDIBImageLoad(const char *Filename)
 {  
 	unsigned int Texture;  
@@ -40,15 +42,6 @@ AUX_RGBImageRec * auxDIBImageLoad(const char *Filename)
 		 free(data);  
 	return tex_result;
 }
-#else
-//#include <GL/gl.h>
-//#include <GL/glu.h>
-#include <GL/glaux.h>
-#include "GL/glut.h"
-#pragma comment(lib,"GLAUX.LIB")
-#pragma comment(lib,"OPENGL32.lib")
-#pragma comment(lib,"glu32.lib")
-#pragma comment(lib,"glut32.lib")
 #endif
 
 void glinfo()
