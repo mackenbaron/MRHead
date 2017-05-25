@@ -3,9 +3,14 @@
 #include "allheaders.h"
 #include "baseapi.h"
 #include "string"
-#ifdef WIN32
+#ifdef _WIN32
+#if _DEBUG
+#pragma comment(lib,"libtesseract304d.lib")
+#pragma comment(lib,"liblept171d.lib")
+#else
 #pragma comment(lib,"libtesseract304.lib")
 #pragma comment(lib,"liblept171.lib")
+#endif
 #endif
 #define TESS_WITH_OPENCV 1
 #if TESS_WITH_OPENCV
@@ -42,7 +47,7 @@ public:
 		return ret;
 	}
 #if TESS_WITH_OPENCV
-	std::string recog(cv::Mat img)
+	std::string recog(const cv::Mat &img)
 	{
 		if (!img.data)
 		{
@@ -50,7 +55,10 @@ public:
 			return "";
 		}
 		api.SetImage((uchar*)img.data, img.cols, img.rows, img.channels(), img.step);
-		return api.GetUTF8Text();
+		char*ocrresult=api.GetUTF8Text();
+		std::string str = ocrresult;
+		delete[]ocrresult;
+		return str;
 	}
 #endif
 private:
