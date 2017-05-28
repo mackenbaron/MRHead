@@ -177,7 +177,7 @@ static bool exist(const char*filepath)
 #include <unistd.h>
 #include <string.h>  
 using std::string;
-static bool getAllSubdirs(string strDir, vector<string> &subdirs)
+static bool getAllSubdirs(std::string strDir, std::vector<std::string> &subdirs)
 {
 	DIR *dp;
 	struct dirent *entry;
@@ -199,7 +199,7 @@ static bool getAllSubdirs(string strDir, vector<string> &subdirs)
 	closedir(dp);
 	return 0;
 }
-static bool getAllFilesinDir(string strDir, vector<string> &files,string ext="*.*")
+static bool getAllFilesinDir(std::string strDir, std::vector<std::string> &files,std::string ext="*.*")
 {
 	struct dirent* ent = NULL;  
 	DIR *pDir;  
