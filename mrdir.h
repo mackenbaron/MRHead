@@ -11,7 +11,7 @@
 #include <direct.h>
 #include <Windows.h>
 #define EXISTS(path) (_access(path, 0)!=-1)
-#define MKDIR(path) mkdir(path)
+#define MKDIR(path) _mkdir(path)
 #define SLEEP(ms) Sleep(ms)
 #else
 #include <unistd.h>
