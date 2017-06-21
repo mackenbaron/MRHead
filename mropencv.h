@@ -20,14 +20,25 @@
 	cout<<#Func<<" cost " << tm.getTimeMilli() << " ms" << endl;\
 
 	#ifdef OPENCV_STATIC
-		#pragma comment( lib,"vfw32.lib")
-		#pragma comment( lib,"comctl32.lib")
-		#pragma comment( lib,"zlib.lib")
-		#pragma comment( lib,"libjasper.lib")
-		#pragma comment( lib,"libjpeg.lib")
-		#pragma comment( lib,"libpng.lib")
-		#pragma comment( lib,"libtiff.lib")
-		#pragma comment( lib,"IlmImf.lib")
+		#if _DEBUG
+			#pragma comment( lib,"vfw32.lib")
+			#pragma comment( lib,"comctl32.lib")
+			#pragma comment( lib,"zlibd.lib")
+			#pragma comment( lib,"libjasperd.lib")
+			#pragma comment( lib,"libjpegd.lib")
+			#pragma comment( lib,"libpngd.lib")
+			#pragma comment( lib,"libtiffd.lib")
+			#pragma comment( lib,"IlmImfd.lib")
+		#else
+			#pragma comment( lib,"vfw32.lib")
+			#pragma comment( lib,"comctl32.lib")
+			#pragma comment( lib,"zlib.lib")
+			#pragma comment( lib,"libjasper.lib")
+			#pragma comment( lib,"libjpeg.lib")
+			#pragma comment( lib,"libpng.lib")
+			#pragma comment( lib,"libtiff.lib")
+			#pragma comment( lib,"IlmImf.lib")
+		#endif
 	#endif
 	#ifdef _DEBUG
 		#define cvLIB(name) "opencv_" name CV_VERSION_ID "d"

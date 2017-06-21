@@ -2,56 +2,112 @@
 #define _MROPENCVUTIL_H_
 #include "opencv2/opencv.hpp"
 #include "atlimage.h"
-static int Mat2CImage(cv::Mat *mat, CImage &img) {
-	if (!mat || mat->empty())
-		return -1;
-	int nBPP = mat->channels() * 8;
-	img.Create(mat->cols, mat->rows, nBPP);
-	if (nBPP == 8)
+// static int Mat2CImage(cv::Mat *mat, CImage &img) {
+// 	if (!mat || mat->empty())
+// 		return -1;
+// 	int nBPP = mat->channels() * 8;
+// 	img.Create(mat->cols, mat->rows, nBPP);
+// 	if (nBPP == 8)
+// 	{
+// 		static RGBQUAD pRGB[256];
+// 		for (int i = 0; i < 256; i++)
+// 			pRGB[i].rgbBlue = pRGB[i].rgbGreen = pRGB[i].rgbRed = i;
+// 		img.SetColorTable(0, 256, pRGB);
+// 	}
+// 	uchar* psrc = mat->data;
+// 	uchar* pdst = (uchar*)img.GetBits();
+// 	int imgPitch = img.GetPitch();
+// 	for (int y = 0; y < mat->rows; y++)
+// 	{
+// 		memcpy(pdst, psrc, mat->cols*mat->channels());//mat->step is incorrect for those images created by roi (sub-images!)  
+// 		psrc += mat->step;
+// 		pdst += imgPitch;
+// 	}
+// 
+// 	return 0;
+// }
+static BOOL Mat2CImage(const cv::Mat& src_img, CImage& dst_img)
+{
+	if (!src_img.data)
 	{
-		static RGBQUAD pRGB[256];
-		for (int i = 0; i < 256; i++)
-			pRGB[i].rgbBlue = pRGB[i].rgbGreen = pRGB[i].rgbRed = i;
-		img.SetColorTable(0, 256, pRGB);
+		return FALSE;
 	}
-	uchar* psrc = mat->data;
-	uchar* pdst = (uchar*)img.GetBits();
-	int imgPitch = img.GetPitch();
-	for (int y = 0; y < mat->rows; y++)
-	{
-		memcpy(pdst, psrc, mat->cols*mat->channels());//mat->step is incorrect for those images created by roi (sub-images!)  
-		psrc += mat->step;
-		pdst += imgPitch;
-	}
+	int width = src_img.cols;
+	int height = src_img.rows;
+	int channels = src_img.channels();
+	int src_type = src_img.type();
 
-	return 0;
+	dst_img.Destroy();
+
+	switch (src_type)
+	{
+	case CV_8UC1:
+	{
+		dst_img.Create(width, -1 * height, 8 * channels);
+		unsigned char* dst_data = static_cast<unsigned char*>(dst_img.GetBits());
+		int step_size = dst_img.GetPitch();
+		unsigned char* src_data = nullptr;
+		for (int i = 0; i < height; i++)
+		{
+			src_data = const_cast<unsigned char*>(src_img.ptr<unsigned char>(i));    
+			for (int j = 0; j < width; j++)
+			{
+				if (step_size > 0)
+				{
+					*(dst_data + step_size*i + j) = *src_data++;
+				}  
+				else
+				{
+					*(dst_data + step_size*i - j) = *src_data++;
+				}
+			}
+		}
+		break;
+	}
+	case CV_8UC3:
+	{
+		dst_img.Create(width, height, 8 * channels);
+		unsigned char* dst_data = static_cast<unsigned char*>(dst_img.GetBits());
+		int step_size = dst_img.GetPitch();
+		unsigned char* src_data = nullptr;
+		for (int i = 0; i < height; i++)
+		{
+			src_data = const_cast<unsigned char*>(src_img.ptr<unsigned char>(i));    
+			for (int j = 0; j < width; j++)
+			{
+				for (int k = 0; k < 3; k++)
+				{
+					*(dst_data + step_size*i + j * 3 + k) = src_data[3 * j + k];
+				}
+			}
+		}
+		break;
+	}
+	default:
+		break;
+	}
+	return TRUE;
+}
+
+
+//功能：把Mat绘制到pWnd所代表的窗体上，使用方法如下所示:
+//DrawMatToWnd(GetDlgItem(IDC_PIC), img);
+static void DrawMat2CWnd(CWnd* pWnd, cv::Mat &img, CRect *Roi = NULL)
+{
+	CImage imgDst;
+	Mat2CImage(img,imgDst);
+	CRect drect;
+	if (Roi == NULL)
+		pWnd->GetClientRect(drect);
+	else
+		drect = *Roi;
+	imgDst.Draw(pWnd->GetDC()->GetSafeHdc(), drect);
 }
 
 static void DrawMat2Wnd(const HWND &hWnd, cv::Mat &img, CRect *Roi = NULL)
 {
-	CWnd*pWnd=CWnd::FromHandle(hWnd);
-	CImage imgDst;
-	Mat2CImage(&img, imgDst);
-	CRect drect;
-	if (Roi == NULL)
-		pWnd->GetClientRect(drect);
-	else
-		drect = *Roi;
-	imgDst.Draw(pWnd->GetDC()->GetSafeHdc(), drect);
-}
-
-//功能：把Mat绘制到pWnd所代表的窗体上，使用方法如下所示:
-//DrawMatToWnd(GetDlgItem(IDC_PIC), img);
-static void DrawMat2Wnd(CWnd* pWnd, cv::Mat &img, CRect *Roi = NULL)
-{
-	CImage imgDst;
-	Mat2CImage(&img,imgDst);
-	CRect drect;
-	if (Roi == NULL)
-		pWnd->GetClientRect(drect);
-	else
-		drect = *Roi;
-	imgDst.Draw(pWnd->GetDC()->GetSafeHdc(), drect);
+	CWnd*pWnd = CWnd::FromHandle(hWnd);
+	DrawMat2CWnd(pWnd, img);
 }
 
 static void BitMat2Wnd(CWnd* wnd, cv::Mat &img, CRect *Roi=NULL)
@@ -59,41 +115,26 @@ static void BitMat2Wnd(CWnd* wnd, cv::Mat &img, CRect *Roi=NULL)
 	if (img.empty())
 		return;
 	CDC *cdc = wnd->GetDC();
-	CDC MemDC;//首先定义一个显示设备对象
-	CBitmap MemBitmap;//定义一个位图对象
+	CDC MemDC;
+	CBitmap MemBitmap;
 	CRect rect, drect;
-
 	wnd->GetClientRect(rect);
-	Gdiplus::Bitmap bitmap(img.cols, img.rows, img.cols * img.channels(), PixelFormat24bppRGB, (BYTE*)img.data);//根据Mat矩阵创建一个GDI+中的Bitmap位图
-
+	Gdiplus::Bitmap bitmap(img.cols, img.rows, img.cols * img.channels(), PixelFormat24bppRGB, (BYTE*)img.data);
 	if (Roi == NULL)
 		drect = rect;
 	else
 		drect = *Roi;
-	//随后建立与屏幕显示兼容的内存显示设备
 	MemDC.CreateCompatibleDC(cdc);
-	//下面建立一个与屏幕显示兼容的位图，至于位图的大小，可以用窗口的大小
 	MemBitmap.CreateCompatibleBitmap(cdc, rect.Width(), rect.Height());
-
-	//将位图选入到内存显示设备中
-	//只有选入了位图的内存显示设备才有地方绘图，画到指定的位图上
 	CBitmap *pOldBit = MemDC.SelectObject(&MemBitmap);
-
-	//先用背景色将位图清除干净，可以用自己应该用的颜色
 	MemDC.FillSolidRect(0, 0, rect.Width(), rect.Height(), RGB(255, 255, 255));
-
-	//绘图
 	Gdiplus::Graphics g(MemDC.m_hDC);
 	Gdiplus::Image *ii = &bitmap;
 	g.DrawImage(ii, Gdiplus::Rect(0, 0, drect.Width(), drect.Height()));
 	g.ReleaseHDC(MemDC.m_hDC);
-
-	//将内存中的图拷贝到屏幕上进行显示
 	cdc->BitBlt(0, 0, drect.Width(), drect.Height(), &MemDC, 0, 0, SRCCOPY);
-	//绘图完成后的清理
 	MemBitmap.DeleteObject();
 	MemDC.DeleteDC();
-	//ReleaseDC(cdc);  这里需要做如下修改
 	wnd->ReleaseDC(cdc);
 }
 
@@ -146,20 +187,7 @@ static void DrawMat2DuiWnd(CWnd* pWnd, cv::Mat &img, CRect *Roi = NULL)
 		bitMapinfo->bmiHeader.biClrUsed = 256; // 位图实际使用的颜色表中的颜色数 
 	}
 	SetStretchBltMode(hDC, COLORONCOLOR);
-	StretchDIBits(hDC,
-		0,
-		0,
-		drect.right, //显示窗口宽度 
-		drect.bottom, //显示窗口高度 
-		0,
-		0,
-		img.cols, //图像宽度 
-		img.rows, //图像高度 
-		img.data,
-		bitMapinfo,
-		DIB_RGB_COLORS,
-		SRCCOPY
-		);
+	StretchDIBits(hDC,0,0,drect.right,drect.bottom,0,0,img.cols,img.rows,img.data,bitMapinfo,DIB_RGB_COLORS,SRCCOPY);
 	delete[]bitBuffer;
 }
 #endif
