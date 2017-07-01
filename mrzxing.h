@@ -9,6 +9,13 @@
 #include <zxing/ChecksumException.h>
 using namespace zxing;
 using namespace zxing::qrcode;
+#if _WIN32
+	#if _DEBUG
+		#pragma comment(lib,"libzxingd.lib")
+	#else
+		#pragma comment(lib,"libzxing.lib")
+	#endif
+#endif
 
 class MRzxing
 {
@@ -21,43 +28,39 @@ public:
 		MRzxing instance;
 		return &instance;
 	}
-	std::string recog(const cv::Mat&image);
+	int recog(const cv::Mat&image, std::string &strQR,const int blocksize = 15, const int C = 2);
 	cv::Mat debug(const cv::Mat&image);
 };
 
-std::string MRzxing::recog(const cv::Mat&image)
+int MRzxing::recog(const cv::Mat&image, std::string &strQR, const int blocksize, const int C)
 {
 	if (!image.data)
-		return "No Image";
+		return -1;
 	cv::Mat grey;
 	cv::cvtColor(image, grey, CV_BGR2GRAY);
 	cv::Mat bin;
-	int thds[] = { 15,197 };
-	int cs[] = { 2,49 };
-	std::string strresult;
-	Ref<Reader> reader;
-	reader.reset(new QRCodeReader);
-	for (int i = 0; i < sizeof(thds) / sizeof(int); i++)
-	{
-		cv::adaptiveThreshold(grey, bin, 255, CV_ADAPTIVE_THRESH_MEAN_C, CV_THRESH_BINARY, thds[i], cs[i]);
-		try {
-			Ref<LuminanceSource> source = MatSource::create(bin);	
-			Ref<Binarizer> binarizer(new GlobalHistogramBinarizer(source));
-			Ref<BinaryBitmap> bitmap(new BinaryBitmap(binarizer));
-			Ref<Result> result(reader->decode(bitmap, DecodeHints(DecodeHints::TRYHARDER_HINT)));
-			return result->getText()->getText();
-		}
-		catch (const ChecksumException &e)
-		{
-			strresult= "bad location";
-		}
-		catch (const std::exception& e) {
-			strresult = e.what();
-		}
+	cv::adaptiveThreshold(grey, bin, 255, CV_ADAPTIVE_THRESH_MEAN_C, CV_THRESH_BINARY, blocksize, C);
+	try {
+		Ref<LuminanceSource> source = MatSource::create(bin);
+		Ref<Reader> reader;
+		reader.reset(new QRCodeReader);
+		Ref<Binarizer> binarizer(new GlobalHistogramBinarizer(source));
+		Ref<BinaryBitmap> bitmap(new BinaryBitmap(binarizer));
+		Ref<Result> result(reader->decode(bitmap, DecodeHints(DecodeHints::TRYHARDER_HINT)));
+		strQR= result->getText()->getText();
+		return 0;
 	}
-	return strresult;
+	catch (const ChecksumException &e)
+	{
+		strQR= "bad location";
+		return -2;
+	}
+	catch (const std::exception& e) {
+		strQR= e.what();
+		return -3;
+	}
+	return -1;
 }
-
 cv::Mat MRzxing::debug(const cv::Mat&image)
 {
 	cv::Mat grey;
@@ -106,5 +109,4 @@ cv::Mat MRzxing::debug(const cv::Mat&image)
 		std::cerr << e.what() << " (ignoring)" << std::endl;
 	}
 }
-
 #endif

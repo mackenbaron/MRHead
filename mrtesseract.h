@@ -3,19 +3,23 @@
 #include "allheaders.h"
 #include "baseapi.h"
 #include "string"
+
 #ifdef _WIN32
-#if _DEBUG
-#pragma comment(lib,"libtesseract304d.lib")
-#pragma comment(lib,"liblept171d.lib")
-#else
-#pragma comment(lib,"libtesseract304.lib")
-#pragma comment(lib,"liblept171.lib")
+	#if _DEBUG
+		#pragma comment(lib,"libtesseract304d.lib")
+		#pragma comment(lib,"liblept171d.lib")
+	#else
+		#pragma comment(lib,"libtesseract304.lib")
+		#pragma comment(lib,"liblept171.lib")
+	#endif
 #endif
-#endif
+
 #define TESS_WITH_OPENCV 1
+
 #if TESS_WITH_OPENCV
-#include "opencv2/opencv.hpp"
+	#include "opencv2/opencv.hpp"
 #endif
+
 #ifdef USE_ENG_DATA
 	const char* langname = "eng";
 #else
@@ -61,6 +65,7 @@ private:
 		api.End();
 	}
 };
+
 
 class MRTessChineseRecognier{
 public:

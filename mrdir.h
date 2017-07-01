@@ -4,15 +4,21 @@
 #include "iostream"
 #include "vector"
 
-// system
+//////////////////////////////////////////////////////////////////////////
+///	用于实现跨平台文件操作
+///	EXISTS 判断文件是否存在
+///	MKDIR  新建文件夹(必须逐级创建)
+///	SLEEP  休眠毫秒
+//////////////////////////////////////////////////////////////////////////
 #ifdef WIN32
 #define NOMINMAX
 #include <io.h>
 #include <direct.h>
-#include <Windows.h>
+#include <windows.h>
 #define EXISTS(path) (_access(path, 0)!=-1)
 #define MKDIR(path) _mkdir(path)
 #define SLEEP(ms) Sleep(ms)
+static bool exist(const char*filepath){return (_access(filepath, 0)) != -1;}
 #else
 #include <unistd.h>
 #include <sys/stat.h>
@@ -20,6 +26,18 @@
 #define MKDIR(path) mkdir(path, 0775)
 #define SLEEP(ms) usleep(ms)
 #endif
+
+//////////////////////////////////////////////////////////////////////////
+///	 @brief用于实现Windows下字符集转换的相关操作
+///	ANSIToUnicode 
+///	UnicodeToANSI
+///	UTF8ToUnicode
+///	UnicodeToUTF8
+///	ANSIToUTF8
+///	UTF8ToANSI
+///	@param str 待转换字符
+///	@retval 转换后的字符
+//////////////////////////////////////////////////////////////////////////
 
 #ifdef _WIN32
 #include <tchar.h>
@@ -75,12 +93,17 @@ static char* UTF8ToANSI(const char* str)
 }
 #endif
 
-//获取当前文件夹下所有子文件夹，保存在vector<string>中
-static bool getAllSubdirs(std::string strDir, std::vector<std::string> &subdirs)
+//////////////////////////////////////////////////////////////////////////
+///  @brief 获取当前文件夹下所有子文件夹
+///  @param strDir 要获取的文件夹路径
+///  @param subdirs 获取到的所有的子目录名称
+//////////////////////////////////////////////////////////////////////////
+static std::vector<std::string> getAllSubdirs(std::string strDir)
 {
 	WIN32_FIND_DATA FindData;
 	HANDLE hError;
 	std::string file2find = strDir + "/*.*";
+	std::vector<std::string> subdirs;
 #if _UNICODE
 	hError = FindFirstFile(ANSIToUnicode(file2find.c_str()), &FindData);
 #else
@@ -89,7 +112,7 @@ static bool getAllSubdirs(std::string strDir, std::vector<std::string> &subdirs)
 	if (hError == INVALID_HANDLE_VALUE)
 	{
 		std::cout << "cannot find subdir in " << strDir<< std::endl;
-		return 0;
+		return subdirs;
 	}
 	else
 	{
@@ -114,14 +137,20 @@ static bool getAllSubdirs(std::string strDir, std::vector<std::string> &subdirs)
 		} while (::FindNextFile(hError, &FindData));
 	}
 	FindClose(hError);
-	return 0;
+	return subdirs;
 }
-
-static bool getAllFilesinDir(std::string strDir, std::vector<std::string> &files, std::string ext = "*.*")//获取当前文件夹下所有子文件夹，保存在vector<string>中
+//////////////////////////////////////////////////////////////////////////
+///  @brief 获取当前文件夹下所有文件
+///  @param strDir 要获取的文件夹路径
+///  @param subdirs 获取到的所有的文件名称
+///  @param ext 后缀名
+//////////////////////////////////////////////////////////////////////////
+static std::vector<std::string> getAllFilesinDir(std::string strDir, std::string ext = "*.*")
 {
 	WIN32_FIND_DATA FindData;
 	HANDLE hError;
 	std::string file2find = strDir + "/" + ext;
+	std::vector<std::string> files;
 #if _UNICODE
 	hError = FindFirstFile(ANSIToUnicode(file2find.c_str()), &FindData);
 #else
@@ -129,7 +158,7 @@ static bool getAllFilesinDir(std::string strDir, std::vector<std::string> &files
 #endif
 	if (hError == INVALID_HANDLE_VALUE)
 	{
-		return 0;
+		return files;
 	}
 	else
 	{
@@ -154,20 +183,7 @@ static bool getAllFilesinDir(std::string strDir, std::vector<std::string> &files
 		} while (::FindNextFile(hError, &FindData));
 	}
 	FindClose(hError);
-	return 0;
-}
-
-#include "io.h"
-static bool exist(const char*filepath)
-{
-	if ((_access(filepath, 0)) != -1)
-	{
-		return true;
-	}
-	else
-	{
-		return false;
-	}
+	return files;
 }
 
 #else
@@ -177,11 +193,12 @@ static bool exist(const char*filepath)
 #include <unistd.h>
 #include <string.h>  
 using std::string;
-static bool getAllSubdirs(std::string strDir, std::vector<std::string> &subdirs)
+static std::vector<std::string> getAllSubdirs(std::string strDir, )
 {
 	DIR *dp;
 	struct dirent *entry;
 	struct stat statbuf;
+	std::vector<std::string> subdirs;
 	if((dp = opendir(strDir.c_str())) == NULL)
 	{    
 		return 0;  
@@ -197,12 +214,13 @@ static bool getAllSubdirs(std::string strDir, std::vector<std::string> &subdirs)
 		} 
 	} 
 	closedir(dp);
-	return 0;
+	return subdirs;
 }
-static bool getAllFilesinDir(std::string strDir, std::vector<std::string> &files,std::string ext="*.*")
+static std::vector<std::string>getAllFilesinDir(std::string strDir, std::string ext="*.*")
 {
 	struct dirent* ent = NULL;  
-	DIR *pDir;  
+	DIR *pDir;
+	std::vector<std::string> files;
 	pDir = opendir(strDir.c_str());  
 	if (pDir == NULL) {  
 		return false;  
@@ -218,7 +236,7 @@ static bool getAllFilesinDir(std::string strDir, std::vector<std::string> &files
 		}
 	}
 	closedir(pDir);  
-	return true;
+	return files;
 }
 #endif
 #endif

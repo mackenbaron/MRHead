@@ -12,7 +12,7 @@
 #pragma comment(lib,"GLAUX.LIB")
 #endif
 #ifdef _WIN64
-AUX_RGBImageRec * auxDIBImageLoad(const char *Filename)
+static AUX_RGBImageRec * auxDIBImageLoad(const char *Filename)
 {  
 	unsigned int Texture;  
 	AUX_RGBImageRec * tex_result=new AUX_RGBImageRec; //be careful  
@@ -44,7 +44,7 @@ AUX_RGBImageRec * auxDIBImageLoad(const char *Filename)
 }
 #endif
 
-void glinfo()
+static void glinfo()
 {
 	const GLubyte* name = glGetString(GL_VENDOR); //返回负责当前OpenGL实现厂商的名字  
 	const GLubyte* biaoshifu = glGetString(GL_RENDERER); //返回一个渲染器标识符，通常是个硬件平台  

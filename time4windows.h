@@ -1,29 +1,19 @@
 #ifndef _MRTIME_H_
 #define _MRTIME_H_
+#ifdef _WIN32
+#include <windows.h>
 #include <time.h>
-#include <ctime>
-#ifdef WIN32
-//#   include <windows.h>
-#else
-#   include <sys/time.h>
-#endif
-/*
-* Structure used in select() call, taken from the BSD file sys/time.h.
-*/
+#define CLKS_PER_SEC ((clock_t)1000)
 struct timeval {
 	long    tv_sec;         /* seconds */
 	long    tv_usec;        /* and microseconds */
 };
-#ifdef WIN32
-#include "time.h"
-#define CLKS_PER_SEC ((clock_t)1000)
 void gettimeofday(struct timeval *tp, void *tzp)
 {
 	//time_t clock;
 	//tm ttime;
 	struct tm *newtime;
 	time_t aclock;
-
 	time_t clockn;
 	time(&aclock);   // Get time in seconds
 	newtime = localtime(&aclock);   // Convert time to struct tm form
@@ -45,7 +35,6 @@ void gettimeofday(struct timeval *tp, void *tzp)
 	//   tp->tv_sec = clock;
 	//   tp->tv_usec = wtm.wMilliseconds * 1000;
 }
-
 void timersub(struct timeval *endPre, struct timeval *beginPre, struct timeval *result)
 {
 	do
@@ -72,7 +61,7 @@ void timeradd(struct timeval *endPre, struct timeval *beginPre, struct timeval *
 		}
 	} while (0);
 }
-
-#endif /* WIN32 */
-
+#else
+#   include <sys/time.h>
+#endif
 #endif
