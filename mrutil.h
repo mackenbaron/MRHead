@@ -1,8 +1,14 @@
 #pragma once
+#include "string"
 #include "sstream"
 #include "vector"
 #include "algorithm"
-using namespace std;
+
+static std::string getFileNameFromPath(const std::string path)
+{
+	return path.substr(0, path.rfind('.'));
+}
+
 #ifdef _WIN32
 	#if USE_CROSS_PLATFORM_SLEEP
 		#include <windows.h>
