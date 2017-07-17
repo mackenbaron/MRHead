@@ -10,8 +10,7 @@
 ///	MKDIR  新建文件夹(必须逐级创建)
 ///	SLEEP  休眠毫秒
 //////////////////////////////////////////////////////////////////////////
-#ifdef WIN32
-#define NOMINMAX
+#ifdef _WIN32
 #include <io.h>
 #include <direct.h>
 #include <windows.h>
@@ -193,7 +192,7 @@ static std::vector<std::string> getAllFilesinDir(std::string strDir, std::string
 #include <unistd.h>
 #include <string.h>  
 using std::string;
-static std::vector<std::string> getAllSubdirs(std::string strDir, )
+static std::vector<std::string> getAllSubdirs(std::string strDir)
 {
 	DIR *dp;
 	struct dirent *entry;
@@ -201,7 +200,7 @@ static std::vector<std::string> getAllSubdirs(std::string strDir, )
 	std::vector<std::string> subdirs;
 	if((dp = opendir(strDir.c_str())) == NULL)
 	{    
-		return 0;  
+		return subdirs;
 	}
 	while((entry = readdir(dp)) != NULL)
 	{  
@@ -223,7 +222,7 @@ static std::vector<std::string>getAllFilesinDir(std::string strDir, std::string 
 	std::vector<std::string> files;
 	pDir = opendir(strDir.c_str());  
 	if (pDir == NULL) {  
-		return false;  
+		return files;
 	}
 	while (NULL != (ent = readdir(pDir))) {  
 		if (ent->d_type == 8) {  

@@ -11,8 +11,8 @@
 #ifdef _WIN32
 	#include <tchar.h>
 	#define CV_VERSION_ID       CVAUX_STR(CV_MAJOR_VERSION) CVAUX_STR(CV_MINOR_VERSION) CVAUX_STR(CV_SUBMINOR_VERSION)
-#include "tickmeter.hpp"
-#define MR_LOG_TIME(Func) \
+	#include "tickmeter.hpp"
+	#define MR_LOG_TIME(Func) \
 	TickMeter tm;\
 	tm.start();\
 	Func;\
@@ -78,29 +78,30 @@
 			#pragma comment( lib, cvLIB("ts"))
 		#endif
 	#else
-	#if CV_MAJOR_VERSION == 3&&CV_MINOR_VERSION ==1
-		#pragma comment( lib, cvLIB("core"))
-		#pragma comment( lib, cvLIB("videoio"))
-		#pragma comment( lib, cvLIB("highgui"))
-		#pragma comment( lib, cvLIB("imgproc"))
-		#pragma comment( lib, cvLIB("imgcodecs"))
-		#if CV_USE_ALL_MODULES		
-			#pragma comment( lib, cvLIB("dnn"))
-			#pragma comment( lib, cvLIB("flann"))
-			#pragma comment( lib, cvLIB("features2d"))
-			#pragma comment( lib, cvLIB("calib3d"))
-			#pragma comment( lib, cvLIB("ml"))
-			#pragma comment( lib, cvLIB("objdetect"))
-			#pragma comment( lib, cvLIB("video"))
-		
-			#pragma comment( lib, cvLIB("tracking"))
-			#pragma comment( lib, cvLIB("dpm"))
+		#if CV_MAJOR_VERSION == 3&&CV_MINOR_VERSION ==1
+			#pragma comment( lib, cvLIB("core"))
+			#pragma comment( lib, cvLIB("videoio"))
+			#pragma comment( lib, cvLIB("highgui"))
+			#pragma comment( lib, cvLIB("imgproc"))
+			#pragma comment( lib, cvLIB("imgcodecs"))
+			#if CV_USE_ALL_MODULES		
+				#pragma comment( lib, cvLIB("dnn"))
+				#pragma comment( lib, cvLIB("flann"))
+				#pragma comment( lib, cvLIB("features2d"))
+				#pragma comment( lib, cvLIB("calib3d"))
+				#pragma comment( lib, cvLIB("ml"))
+				#pragma comment( lib, cvLIB("objdetect"))
+				#pragma comment( lib, cvLIB("video"))
+				#pragma comment( lib, cvLIB("tracking"))
+				#pragma comment( lib, cvLIB("dpm"))
+			#endif
+		#else
+			#if CV_MAJOR_VERSION == 3&&CV_MINOR_VERSION ==2&&_MSC_VER==1900
+				#pragma comment( lib, cvLIB("world") )
+			#else
+				#pragma comment( lib, cvLIB("dnn"))
+			#endif
 		#endif
-	#else
-	#if CV_MAJOR_VERSION == 3&&CV_MINOR_VERSION ==2
-	#pragma comment( lib, cvLIB("world") )
-	#endif
-	#endif
 	#endif
 	#endif
 #endif
